@@ -31,7 +31,7 @@ const AXES = {
 };
 
 // API Configuration
-const FIXED_API_URL = "https://oc-interactive-web-api.lnln2004.workers.dev/generate";
+const FIXED_API_URL = "https://oc-interactive-web-api.yuqing-bnds.workers.dev/generate";
 
 // Available Pro models (SiliconFlow - fast ones)
 const AVAILABLE_MODELS = [
