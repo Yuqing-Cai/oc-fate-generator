@@ -30,12 +30,23 @@ const AXES = {
   Palette: { desc: "美学风格", options: { "东方古典": "诗性留白克制深情", "新中式/国潮": "高饱和古今混血", "西方史诗": "宏大仪式感", "废土写实": "粗粝求生感", "赛博美学": "霓虹冷感", "哥特/暗黑浪漫": "华丽危险", "黑色电影/noir": "高对比光影", "田园治愈": "日常慢热", "暗黑童话/怪奇": "童真下残酷", "极简留白": "沉默更有信息量" } }
 };
 
-// API Configuration - UPDATE THIS WITH YOUR DEPLOYED WORKER URL
+// API Configuration
 const FIXED_API_URL = "https://oc-interactive-web-api.lnln2004.workers.dev/generate";
-const DEFAULT_MODEL = "Qwen/Qwen3-235B-A22B-Thinking-2507";
+
+// Available Pro models (SiliconFlow - fast ones)
+const AVAILABLE_MODELS = [
+  { value: "Pro/zai-org/GLM-5", label: "GLM-5 (默认)" },
+  { value: "Pro/Qwen/Qwen3-235B-A22B-Thinking-2507", label: "Qwen3-235B" },
+  { value: "Pro/Qwen/Qwen2.5-72B-Instruct", label: "Qwen2.5-72B" },
+  { value: "Pro/moonshotai/Kimi-K2.5", label: "Kimi K2.5" },
+  { value: "Pro/MiniMaxAI/MiniMax-M2.5", label: "MiniMax M2.5" },
+  { value: "Pro/deepseek-ai/DeepSeek-V3", label: "DeepSeek V3" },
+  { value: "Pro/deepseek-ai/DeepSeek-R1", label: "DeepSeek R1" },
+];
+const DEFAULT_MODEL = "Pro/zai-org/GLM-5";
 
 // DOM Elements
-let axisContainer, selectedCountEl, generateBtn, resultEl, statusEl, extraPromptInput;
+let axisContainer, selectedCountEl, generateBtn, resultEl, statusEl, extraPromptInput, modelSelect;
 
 document.addEventListener('DOMContentLoaded', () => {
   axisContainer = document.getElementById("axisContainer");
@@ -44,12 +55,28 @@ document.addEventListener('DOMContentLoaded', () => {
   resultEl = document.getElementById("result");
   statusEl = document.getElementById("status");
   extraPromptInput = document.getElementById("extraPrompt");
+  modelSelect = document.getElementById("modelSelect");
   
   renderAxes();
+  renderModelSelector();
   updateSelectedCount();
   
   generateBtn.addEventListener("click", generate);
 });
+
+function renderModelSelector() {
+  if (!modelSelect) return;
+  
+  const savedModel = localStorage.getItem("oc_model") || DEFAULT_MODEL;
+  
+  modelSelect.innerHTML = AVAILABLE_MODELS.map(m => 
+    `<option value="${m.value}" ${m.value === savedModel ? 'selected' : ''}>${m.label}</option>`
+  ).join('');
+  
+  modelSelect.addEventListener('change', () => {
+    localStorage.setItem("oc_model", modelSelect.value);
+  });
+}
 
 function renderAxes() {
   if (!axisContainer) return;
@@ -122,15 +149,16 @@ async function generate() {
     return;
   }
   
+  const selectedModel = modelSelect?.value || DEFAULT_MODEL;
   const mode = detectMode(selections);
   const modeLabel = mode === "timeline" ? "完整时间线" : "开场静态";
   
   setLoading(true);
   resultEl.textContent = "";
-  setStatus(`⏳ 正在生成（${modeLabel}）…`, false);
+  setStatus(`⏳ 正在生成（${modeLabel}, ${AVAILABLE_MODELS.find(m=>m.value===selectedModel)?.label||selectedModel}）…`, false);
   
   try {
-    const payload = { selections, model: DEFAULT_MODEL, extraPrompt: extraPromptInput?.value || "" };
+    const payload = { selections, model: selectedModel, extraPrompt: extraPromptInput?.value || "" };
     
     // Retry logic: 3 attempts with exponential backoff
     let lastError;

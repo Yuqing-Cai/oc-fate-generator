@@ -26,8 +26,9 @@ h1 { text-align: center; margin-bottom: 10px; color: #00d4ff; font-size: 28px; }
 .result-line { margin: 8px 0; color: #ccc; }
 .result-bullet { margin-left: 20px; color: #aaa; }
 .result-blank { height: 10px; }
-.extra-input { width: 100%; padding: 12px; background: #25252d; border: 1px solid #333; color: #fff; border-radius: 8px; margin-bottom: 20px; font-family: inherit; font-size: 14px; resize: vertical; }
-.extra-input:focus { outline: none; border-color: #00d4ff; }
+select { outline: none; }
+select:focus { outline: none; border-color: #00d4ff; }
+input[type="text"]:focus { outline: none; border-color: #00d4ff; }
 footer { text-align: center; margin-top: 40px; color: #666; font-size: 12px; }
 footer a { color: #00d4ff; text-decoration: none; }
 footer a:hover { text-decoration: underline; }

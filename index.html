@@ -41,7 +41,16 @@
     
     <div id="axisContainer"></div>
     
-    <textarea id="extraPrompt" class="extra-input" placeholder="补充偏好（可选）：例如「想要更强烈的冲突感」、「希望男主更温柔一些」..." rows="3"></textarea>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+      <div>
+        <label style="display: block; margin-bottom: 5px; color: #888; font-size: 13px;">选择模型</label>
+        <select id="modelSelect" style="width: 100%; padding: 10px; background: #25252d; border: 1px solid #333; color: #fff; border-radius: 6px; font-size: 14px;"></select>
+      </div>
+      <div>
+        <label style="display: block; margin-bottom: 5px; color: #888; font-size: 13px;">补充偏好（可选）</label>
+        <input id="extraPrompt" type="text" style="width: 100%; padding: 10px; background: #25252d; border: 1px solid #333; color: #fff; border-radius: 6px; font-size: 14px;" placeholder="例如：更强烈的冲突感..."/>
+      </div>
+    </div>
     
     <div class="controls">
       <p id="selectedCount" style="margin-bottom: 15px; color: #888;">已选 0 项</p>
