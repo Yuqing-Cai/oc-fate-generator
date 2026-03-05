@@ -47,6 +47,8 @@ const DEFAULT_MODEL = "Pro/zai-org/GLM-5";
 
 // DOM Elements
 let axisContainer, selectedCountEl, generateBtn, resultEl, statusEl, extraPromptInput, modelSelect;
+let timerInterval = null;
+let startTime = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   axisContainer = document.getElementById("axisContainer");
@@ -63,6 +65,27 @@ document.addEventListener('DOMContentLoaded', () => {
   
   generateBtn.addEventListener("click", generate);
 });
+
+function startTimer() {
+  startTime = Date.now();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    if (statusEl) {
+      const currentText = statusEl.textContent.replace(/⏱️ [\d.]+s/, '');
+      statusEl.textContent = `${currentText.trim()} ⏱️ ${elapsed}s`;
+    }
+  }, 100);
+}
+
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  const elapsed = startTime ? ((Date.now() - startTime) / 1000).toFixed(1) : 0;
+  return elapsed;
+}
 
 function renderModelSelector() {
   if (!modelSelect) return;
@@ -152,64 +175,71 @@ async function generate() {
   const selectedModel = modelSelect?.value || DEFAULT_MODEL;
   const mode = detectMode(selections);
   const modeLabel = mode === "timeline" ? "完整时间线" : "开场静态";
+  const modelLabel = AVAILABLE_MODELS.find(m=>m.value===selectedModel)?.label||selectedModel;
   
   setLoading(true);
   resultEl.textContent = "";
-  setStatus(`⏳ 正在生成（${modeLabel}, ${AVAILABLE_MODELS.find(m=>m.value===selectedModel)?.label||selectedModel}）…`, false);
+  resultEl.style.display = 'block';
+  startTimer();
+  setStatus(`⏳ 正在生成（${modeLabel}, ${modelLabel}）…`, false);
   
   try {
     const payload = { selections, model: selectedModel, extraPrompt: extraPromptInput?.value || "" };
+    console.log('🔍 Sending request to:', FIXED_API_URL);
+    console.log('📦 Payload:', JSON.stringify(payload, null, 2));
     
-    // Retry logic: 3 attempts with exponential backoff
-    let lastError;
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      try {
-        const response = await fetch(FIXED_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        
-        if (!response.ok) {
-          const errorText = await response.text().catch(() => "");
-          throw new Error(`HTTP ${response.status}: ${errorText.slice(0, 200)}`);
-        }
-        
-        const data = await response.json();
-        const content = String(data?.content || "").trim();
-        
-        if (!content) {
-          throw new Error("服务端返回空内容");
-        }
-        
-        resultEl.innerHTML = renderResultContent(content);
-        setStatus(`✅ 生成成功！`, false);
-        return;
-      } catch (err) {
-        lastError = err;
-        if (attempt < 3) {
-          setStatus(`⚠️ 尝试 ${attempt}/3 失败，重试中…`, false);
-          await new Promise(r => setTimeout(r, 1000 * attempt));
-        }
-      }
+    // Single attempt with timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
+    
+    const response = await fetch(FIXED_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+    
+    clearTimeout(timeoutId);
+    console.log('📥 Response status:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => "");
+      console.error('❌ Error response:', errorText);
+      throw new Error(`HTTP ${response.status}: ${errorText.slice(0, 200)}`);
     }
     
-    throw lastError;
+    const data = await response.json();
+    console.log('📦 Response data:', data);
+    const content = String(data?.content || "").trim();
+    
+    if (!content) {
+      throw new Error("服务端返回空内容");
+    }
+    
+    const elapsed = stopTimer();
+    resultEl.innerHTML = renderResultContent(content);
+    setStatus(`✅ 生成成功！耗时 ${elapsed}s`, false);
+    return;
   } catch (err) {
+    stopTimer();
     const msg = mapError(err);
+    console.error('❌ Full error:', err);
     setStatus(`❌ ${msg}`, true);
-    resultEl.textContent = `生成失败：${msg}\n\n💡 提示：如果 Worker 未部署或 API Key 过期，请联系作者更新后端配置。`;
+    resultEl.innerHTML = `<div style="color:#ef4444;">生成失败：<pre style="white-space:pre-wrap;font-size:12px;">${escapeHtml(err.message)}\n\n💡 调试信息：\n- API URL: ${FIXED_API_URL}\n- 模型：${selectedModel}\n- 选择数：${selections.length}\n\n请检查：\n1. Worker 是否在线\n2. API Key 是否有效\n3. 浏览器控制台查看详细日志</pre></div>`;
   } finally {
     setLoading(false);
   }
 }
 
 function mapError(err) {
-  if (err?.name === "TypeError" || err?.message?.includes("fetch")) {
-    return "网络请求失败，请检查：\n1. 后端 Worker 是否已部署\n2. 网络连接是否正常\n3. 浏览器控制台查看详细错误";
+  if (err?.name === "AbortError" || err?.message?.includes("timeout")) {
+    return "请求超时（60 秒），可能是：\n1. AI 模型太忙\n2. 网络太慢\n3. Worker 卡住了\n\n建议：换个模型重试，或等会儿再试";
+  }
+  if (err?.name === "TypeError" || err?.message?.includes("Failed to fetch")) {
+    return "网络请求失败：\n1. Worker 可能离线了\n2. 检查网络连接\n3. 按 F12 看控制台错误详情";
   }
   if (err?.message?.includes("401") || err?.message?.includes("403")) {
-    return "API 认证失败（401/403），Worker 的 API Key 可能已过期。";
+    return "API 认证失败（401/403），Worker 的 API Key 可能无效。";
   }
   if (err?.message?.includes("404")) {
     return "API 地址不存在（404），Worker 可能未部署。";
