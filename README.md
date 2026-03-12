@@ -132,7 +132,7 @@ After deployment, paste the returned `/generate` endpoint back into the frontend
 
 ## 在线试玩
 
-**https://yuqing-cai.github.io/oc-interactive-web/**
+**http://www.lnln.fun/oc-gen/**
 
 打开页面后，至少选择 3 个轴，可选填写补充偏好，然后直接生成。
 
