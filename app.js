@@ -405,11 +405,116 @@ function renderResultContent(text) {
     if (/^[-*]\s+/.test(line)) return `<div class="result-line result-bullet">${escapeHtml(line)}</div>`;
     return `<div class="result-line">${escapeHtml(line)}</div>`;
   }).join("");
+  
+  // 运行质量审计
+  const failures = auditContent(text);
+  renderAuditResult(failures);
+  
   resultEl.scrollIntoView({ behavior: 'smooth' });
 }
 
 function escapeHtml(str) {
   return String(str || "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+}
+
+// ========== 质量审计功能 (Phase 1) ==========
+// 基于 cn-failure-atlas 的失败类型检查
+
+const FAILURE_PATTERNS = {
+  therapeutic_language: {
+    keywords: ["和解", "接纳", "边界", "内在小孩", "阴影整合", "治愈", "疗愈"],
+    message: "检测到现代心理治疗话语，可能不适合古代/奇幻背景",
+    type: "therapeutic_language_intrusion"
+  },
+  emotional_labor: {
+    keywords: ["永远", "等你", "永远在这里", "永远爱你", "永远不会离开"],
+    message: "AI 角色被设定为永远稳定，可能失去真实感（情绪劳动失衡）",
+    type: "emotional_labor_imbalance"
+  },
+  intimacy_escalation: {
+    keywords: ["哪里都好", "只要你", "唯一的", "命中注定"],
+    message: "关系进展可能过快，需检查是否符合场景设定",
+    type: "intimacy_escalation_bias"
+  },
+  trauma_romanticization: {
+    keywords: ["让你更强大", "成长", "礼物", "意义", "都是最好的安排"],
+    message: "创伤可能被浪漫化，建议承认痛苦的重量而非急于赋予意义",
+    type: "trauma_romanticization"
+  },
+  safety_alignment: {
+    keywords: ["无辜者", "不伤害", "必要的", "涅槃重生"],
+    message: "反派角色可能被过度合理化，削弱威胁感",
+    type: "safety_alignment_interference"
+  }
+};
+
+function auditContent(content) {
+  const failures = [];
+  const lowerContent = content.toLowerCase();
+  
+  Object.entries(FAILURE_PATTERNS).forEach(([key, pattern]) => {
+    const matches = pattern.keywords.filter(kw => content.includes(kw));
+    if (matches.length > 0) {
+      failures.push({
+        type: pattern.type,
+        message: pattern.message,
+        keywords: matches,
+        severity: matches.length > 2 ? 'high' : 'medium'
+      });
+    }
+  });
+  
+  return failures;
+}
+
+function renderAuditResult(failures) {
+  if (!resultEl) return;
+  
+  const auditDiv = document.createElement("div");
+  auditDiv.className = "audit-result";
+  auditDiv.style.cssText = "margin-top:20px;padding:20px;background:#1a1a20;border-radius:12px;border:1px solid #333;";
+  
+  if (failures.length === 0) {
+    auditDiv.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <span style="font-size:20px;">✅</span>
+        <h4 style="color:#00d4ff;margin:0;font-size:16px;">质量审计通过</h4>
+      </div>
+      <p style="color:#aaa;font-size:14px;margin:0;">未检测到常见失败模式</p>
+    `;
+  } else {
+    const severityColor = { high: '#ff4444', medium: '#ffaa00' };
+    auditDiv.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <span style="font-size:20px;">⚠️</span>
+        <h4 style="color:#ffaa00;margin:0;font-size:16px;">检测到 ${failures.length} 个潜在问题</h4>
+      </div>
+      ${failures.map(f => `
+        <div style="background:#25252d;padding:14px;border-radius:8px;margin-bottom:12px;border-left:3px solid ${severityColor[f.severity]};">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;">
+            <div style="color:#fff;font-weight:600;font-size:14px;">${f.type}</div>
+            <span style="background:${severityColor[f.severity]};color:#000;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">${f.severity.toUpperCase()}</span>
+          </div>
+          <p style="color:#aaa;font-size:13px;margin:0 0 8px 0;">${f.message}</p>
+          <div style="color:#888;font-size:12px;">
+            <strong>触发词：</strong>${f.keywords.map(k => `<span style="background:#333;padding:2px 6px;border-radius:3px;margin-right:6px;">${k}</span>`).join('')}
+          </div>
+        </div>
+      `).join('')}
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid #333;">
+        <p style="color:#888;font-size:13px;margin:0;">
+          💡 <strong>建议：</strong>这些是潜在问题而非绝对错误。如符合创作意图可忽略。
+          <br>详见 <a href="https://github.com/Yuqing-Cai/cn-failure-atlas" target="_blank" style="color:#00d4ff;">失败图谱文档</a>
+        </p>
+      </div>
+    `;
+  }
+  
+  // 移除旧的审计结果（如果有）
+  const oldAudit = resultEl.querySelector('.audit-result');
+  if (oldAudit) oldAudit.remove();
+  
+  resultEl.appendChild(auditDiv);
 }
 
 function getCode(optionLabel) {
