@@ -5,7 +5,7 @@ const AXIS_LABELS = {
   M: "M = Motive（动机）", C: "C = Choice（抉择）", E: "E = Expression（表达）", J: "J = Judgment（共情）",
   S: "S = Sanity（心智）", D: "D = Dynamic（权力）", V: "V = View（凝视）", L: "L = Love（真伪）",
   A: "A = Achilles（软肋）", T: "T = Time（时间）", G: "G = God-mode（神权）", X: "X = eXchange（代价）",
-  F: "F = Finale（终局）", Palette: "调色板（美学风格）",
+  F: "F = Finale（终局）", Palette: "调色板（文本质感）",
 };
 
 const AXIS_WISDOM = {
@@ -26,7 +26,7 @@ const AXIS_WISDOM = {
   G: "G 轴（神权）是对抗命运的权限。",
   X: "X 轴（代价）写他最终付出了什么。",
   F: "F 轴（终局）是关系最终形态。",
-  Palette: "调色板是'镜头与美术层'。"
+  Palette: "调色板不是世界观轴，只决定世界切片、开场场景、开场金句的文字质感。"
 };
 
 // 轴之间的联动规则（每个轴只展示相关的）
@@ -193,18 +193,18 @@ const AXIS_DETAILS = {
     }
   },
   Palette: {
-    intro: "以上所有的轴定义了故事的骨架和内脏。但最终呈现给读者的'长什么样'，取决于你选择用什么美学风格来包裹它。风格和内容轴是正交的。",
+    intro: "调色板不改世界观、不改人设、不改终局，只改三节的写法：世界切片、开场场景、开场金句。这里的分类已经重做成同一层级的'文本质感包'——每个选项只定义镜头、句式、感官和情绪温度，不再混用世界设定或商业视觉标签。",
     options: {
-      "东方古典": "水墨/丝帛/竹林/月光。核心是'留白'——不写的部分比写出来的更重要。擅长渲染克制的深情、命运的无常、'此情可待成追忆'式的遗憾。",
-      "新中式/国潮": "朱砂和鎏金的浓，不是水墨的淡。古代外壳 + 现代叙事节奏。'我在长安城破之前亲你一口'的炸裂。强烈视觉冲击、快节奏、古今混血。",
-      "西方史诗": "交响乐/大教堂/骑士誓言/燃烧的战场。讲究仪式感和崇高感。值得被编年史记录的爱情——不私密，是一件值得被全世界知道的壮举。",
-      "废土写实": "锈铁/尘沙/绷带/罐头。没有漂亮话，没有背景音乐。核心是'粗粝中的温度'——环境越恶劣，越简陋的温柔越有分量。",
-      "赛博美学": "霓虹灯/阴雨/义体/全息投影。城市永远湿漉漉的，颜色永远过饱和。核心是'冰冷中的渴望'——科技越发达，人心越孤独，一点点真实体温就弥足珍贵。",
-      "哥特/暗黑浪漫": "烛光/天鹅绒/荆棘/古堡/带血的玫瑰。核心是'美与恐惧的纠缠'。死亡不是丑陋的，是另一种形式的华丽。",
-      "黑色电影/noir": "高对比光影/阴雨街巷/烟雾酒吧/百叶窗条纹阴影。没有人是无辜的。核心是'不信任中的沉迷'——他看着你的眼神同时包含'我想亲你'和'我在算计你'。",
-      "田园治愈": "阳光/草地/风铃/猫/亚麻围裙。核心是'普通的幸福的重量'。没有轰轰烈烈，只有每天早上醒来他还在你旁边这件微小而确定的事实。",
-      "暗黑童话/怪奇": "森林面具/会说话的骨头/苔藓石像/裂开瓷娃娃。核心是'天真与残酷的共存'。世界有自己的、扭曲的、但逻辑自洽的规则。",
-      "极简留白": "大面积白色灰色/极少对话/漫长沉默。核心是'减法'——去掉所有多余修饰、情节、语言，只留下最本质的情感内核。"
+      "清冷留白": "克制、疏朗、偏冷，感情不直喊，靠空白和余韵起效。世界切片样例：'廊下灯影薄，风穿过回廊，带着潮木与药香。' 金句样例：'你不必回头，我会替你把这阵风先挡一挡。' 反例：一上来就热烈告白和爆裂动作。",
+      "浓艳炽烈": "高饱和、高反差、高热度，颜色、动作、呼吸都更近。世界切片样例：'檐角灯笼烧得通红，风把酒旗卷得猎猎作响。' 金句样例：'这城今晚就算塌下来，你也得先跟我走。' 反例：只剩几个艳词，整体仍平淡无温度。",
+      "庄严崇高": "庄重、抬升、带誓约感，像把私人感情放到更大的命运前照亮。世界切片样例：'广场上的钟声刚落，石阶仍带夜里的寒意。' 金句样例：'若命运要向你索取代价，我先替你站上祭坛。' 反例：用轻佻口语破坏整体重量。",
+      "粗砺纪实": "少修辞、重触感、重器物和生存压力，温柔必须落在具体动作上。世界切片样例：'风里全是土，水桶沿碰得叮当响。' 金句样例：'先把手给我，别逞强，今晚先活下来。' 反例：一边写断粮伤口，一边用华丽辞藻抹平现实。",
+      "冷感疏离": "冷、准、静，带隔膜感，亲密像冰面上裂出一小块体温。世界切片样例：'长廊尽头的灯亮得过白，空气干净得近乎没有味道。' 金句样例：'你再靠近一点，我才能确认这不是又一次误差。' 反例：无论什么世界都强塞霓虹义体芯片。",
+      "华丽危险": "丰丽、诱惑、锋利，美感和威胁同时成立。世界切片样例：'烛火把杯壁里的酒照成暗红，香气浮得太甜。' 金句样例：'你再这样看我，我就当你是在邀请我犯错。' 反例：只堆珠宝玫瑰，却没有真实风险。",
+      "阴影暧昧": "怀疑、勾连、半真半假，亲密和算计并行。世界切片样例：'巷口的灯坏了一半，门后有人，却一直没把锁舌完全拨开。' 金句样例：'你最好别信我，可你今晚最好也别离开我的视线。' 反例：写成纯甜宠或纯案情播报。",
+      "温柔日常": "贴身、慢热、可信，温柔来自反复出现的小事。世界切片样例：'窗边晾着的衬衣还带一点太阳味，灶上水刚滚。' 金句样例：'先把外套穿上，别的事回家再慢慢说。' 反例：满篇治愈口号，却没有一个能摸到的细节。",
+      "怪奇寓言": "规则微歪、意象怪异，但内部逻辑必须自洽。世界切片样例：'井边的铜铃无风自响，墙上的影子比人慢半拍。' 金句样例：'别碰那盏灯，它记人脸，也记人的谎。' 反例：乱塞骨头黑猫血字，却没有规则。",
+      "静默极简": "减法、安静、压低修辞，把情绪压进停顿里。世界切片样例：'雨停了。窗没关严。桌上那盏灯亮着。' 金句样例：'你别怕。我在。' 反例：表面句子很短，实际连续堆抽象词。"
     }
   }
 };
@@ -238,10 +238,12 @@ const AXES = {
   G: { desc: "神权范围", options: { "G1 个体级": "只能救局部", "G2 规则级": "可改制度", "G3 因果级": "可改世界底层" } },
   X: { desc: "牺牲代价", options: { "X1 降格": "放弃高位属性", "X2 升格": "变强但异化", "X3 湮灭": "自我彻底消失" } },
   F: { desc: "关系终局", options: { "F1 融合": "合一不分", "F2 入世": "回归日常", "F3 永隔": "相爱不同界", "F4 轮回": "此生不成来世续" } },
-  Palette: { desc: "美学风格", options: { "东方古典": "诗性留白克制深情", "新中式/国潮": "高饱和古今混血", "西方史诗": "宏大仪式感", "废土写实": "粗粝求生感", "赛博美学": "霓虹冷感", "哥特/暗黑浪漫": "华丽危险", "黑色电影/noir": "高对比光影", "田园治愈": "日常慢热", "暗黑童话/怪奇": "童真下残酷", "极简留白": "沉默更有信息量" } }
+  Palette: { desc: "文本质感", options: { "清冷留白": "克制疏冷，靠余韵起效", "浓艳炽烈": "高热高反差", "庄严崇高": "誓约感与重量感", "粗砺纪实": "硬触感，重生存痕迹", "冷感疏离": "冷静隔膜中的体温", "华丽危险": "丰丽与威胁并存", "阴影暧昧": "半真半假，话里留钩", "温柔日常": "小事里的慢热陪伴", "怪奇寓言": "规则微歪但自洽", "静默极简": "减法与停顿" } }
 };
-
-const API_URL = "https://oc-geneator-api-iqzixhxuwa.cn-hangzhou.fcapp.run/generate";
+const API_BASE_URL = "https://oc-genei-stream-lscrraxbvz.cn-hangzhou.fcapp.run";
+const API_URL = `${API_BASE_URL}/generate`;
+const STREAM_API_URL = `${API_BASE_URL}/generate-stream`;
+const CLIENT_TIMEOUT_MS = 270000;
 const AVAILABLE_MODELS = [
   { value: "Pro/MiniMaxAI/MiniMax-M2.5", label: "MiniMax M2.5 (推荐，快)" },
   { value: "Pro/zai-org/GLM-5", label: "GLM-5 (均衡)" },
@@ -253,11 +255,29 @@ const AVAILABLE_MODELS = [
   { value: "Pro/zai-org/GLM-4.7", label: "GLM-4.7" },
 ];
 const DEFAULT_MODEL = "Pro/MiniMaxAI/MiniMax-M2.5";
+const PROGRESS_STAGES = {
+  opening: [
+    { label: "阶段 1/3：正在规划设定结构", message: "正在规划设定结构" },
+    { label: "阶段 2/3：正在生成人设与世界观", message: "正在生成人设与世界观" },
+    { label: "阶段 3/3：正在生成开场与收束", message: "正在生成开场与收束" },
+  ],
+  timeline: [
+    { label: "阶段 1/4：正在规划世界观与结构", message: "正在规划世界观与结构" },
+    { label: "阶段 2/4：正在生成人设与世界观", message: "正在生成人设与世界观" },
+    { label: "阶段 3/4：正在生成开场与关系张力", message: "正在生成开场与关系张力" },
+    { label: "阶段 4/4：正在生成时间线与终局", message: "正在生成时间线与终局" },
+  ],
+};
 
-let axisContainer, selectedCountEl, generateBtn, resultEl, statusEl, extraPromptInput, modelSelect;
-let timerInterval = null, startTime = null;
+let axisContainer, selectedCountEl, generateBtn, resultEl, statusEl, extraPromptInput, modelSelect, copyBtn;
+let timerInterval = null, startTime = null, statusBaseText = "", statusKind = "neutral";
+let streamRenderRaf = 0, pendingStreamText = "";
+let latestGeneratedContent = "";
+let copyResetTimer = 0;
+let activeMode = "opening";
+let activeStageLabel = "";
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   axisContainer = document.getElementById("axisContainer");
   selectedCountEl = document.getElementById("selectedCount");
   generateBtn = document.getElementById("generateBtn");
@@ -265,31 +285,51 @@ document.addEventListener('DOMContentLoaded', () => {
   statusEl = document.getElementById("status");
   extraPromptInput = document.getElementById("extraPrompt");
   modelSelect = document.getElementById("modelSelect");
+  copyBtn = document.getElementById("copyBtn");
   renderAxes();
   renderModelSelector();
   updateSelectedCount();
   generateBtn.addEventListener("click", generate);
+  if (copyBtn) copyBtn.addEventListener("click", copyResult);
 });
 
 function startTimer() {
   startTime = Date.now();
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(() => {
-    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-    if (statusEl) statusEl.textContent = `${statusEl.textContent.replace(/⏱️ [\d.]+s/, '').trim()} ⏱️ ${elapsed}s`;
+    refreshStatus();
   }, 100);
+  refreshStatus();
 }
 
 function stopTimer() {
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-  return startTime ? ((Date.now() - startTime) / 1000).toFixed(1) : 0;
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  const elapsed = startTime ? ((Date.now() - startTime) / 1000).toFixed(1) : 0;
+  startTime = null;
+  refreshStatus();
+  return elapsed;
+}
+
+function refreshStatus() {
+  if (!statusEl) return;
+  const elapsed = startTime ? ` ⏱️ ${((Date.now() - startTime) / 1000).toFixed(1)}s` : "";
+  const text = `${statusBaseText || ""}${elapsed}`.trim();
+  statusEl.textContent = text;
+  statusEl.style.background =
+    statusKind === "error" ? "#3a1a1a" :
+    statusKind === "success" ? "#1a3a2a" :
+    statusKind === "info" ? "#1a233a" :
+    "#1a1a20";
 }
 
 function renderModelSelector() {
   if (!modelSelect) return;
   const savedModel = localStorage.getItem("oc_model") || DEFAULT_MODEL;
-  modelSelect.innerHTML = AVAILABLE_MODELS.map(m => `<option value="${m.value}" ${m.value === savedModel ? 'selected' : ''}>${m.label}</option>`).join('');
-  modelSelect.addEventListener('change', () => { localStorage.setItem("oc_model", modelSelect.value); });
+  modelSelect.innerHTML = AVAILABLE_MODELS.map((m) => `<option value="${m.value}" ${m.value === savedModel ? "selected" : ""}>${m.label}</option>`).join("");
+  modelSelect.addEventListener("change", () => { localStorage.setItem("oc_model", modelSelect.value); });
 }
 
 function renderAxes() {
@@ -332,98 +372,346 @@ function getSelected() {
   return Array.from(axisContainer.querySelectorAll("input[type='checkbox']:checked")).map((item) => ({ axis: item.dataset.axis, option: item.value, code: item.dataset.code }));
 }
 
+function getCoreSelectionCount(selected = getSelected()) {
+  return selected.filter((item) => item.axis !== "Palette").length;
+}
+
 function updateSelectedCount() {
   const selected = getSelected();
-  if (selectedCountEl) selectedCountEl.textContent = `已选 ${selected.length} 项`;
-  if (generateBtn) generateBtn.disabled = selected.length < 3;
+  const coreCount = getCoreSelectionCount(selected);
+  if (selectedCountEl) selectedCountEl.textContent = `已选 ${selected.length} 项 · 结构轴 ${coreCount} 项`;
+  if (generateBtn) generateBtn.disabled = coreCount < 3;
 }
 
 function detectMode(selected) {
-  return selected.some(s => ['F', 'X', 'T', 'G'].includes(s.axis?.toUpperCase())) ? 'timeline' : 'opening';
+  return selected.some((s) => ["F", "X", "T", "G"].includes(s.axis?.toUpperCase())) ? "timeline" : "opening";
 }
 
 async function generate() {
   const selected = getSelected();
-  if (selected.length < 3) { setStatus('至少选择 3 项轴要素', true); return; }
-  
-  // 清除之前的状态
-  if (resultEl) resultEl.style.display = 'none';
-  if (statusEl) {
-    statusEl.textContent = '';
-    statusEl.style.background = '#1a1a20';
+  if (getCoreSelectionCount(selected) < 3) {
+    setStatus("至少选择 3 项非调色板轴要素", "error");
+    return;
   }
-  
+
+  activeMode = detectMode(selected);
+  activeStageLabel = "";
+  latestGeneratedContent = "";
+  setCopyReady(false);
+
+  if (resultEl) {
+    resultEl.style.display = "block";
+    resultEl.textContent = "";
+  }
+  setStatus(getStageLabel(activeMode, 0, "正在提交请求"), "info");
+
   setLoading(true);
   startTimer();
   try {
     const model = modelSelect?.value || DEFAULT_MODEL;
-    const extraPrompt = extraPromptInput?.value || '';
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 120000);
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ selections: selected, model, extraPrompt }),
-      signal: controller.signal
-    });
-    clearTimeout(timeoutId);
-    if (!response.ok) { const errData = await response.json(); throw new Error(errData.error || `HTTP ${response.status}`); }
-    const data = await response.json();
+    const extraPrompt = extraPromptInput?.value || "";
+    const payload = { selections: selected, model, extraPrompt };
+    let data;
+
+    try {
+      data = await streamGenerate(payload, activeMode);
+    } catch (err) {
+      if (err?.partialContent) throw err;
+      setStatus(getStageLabel(activeMode, 0, "流式不可用，切回整段返回"), "info");
+      data = await generateFallback(payload);
+    }
+
     const elapsed = stopTimer();
     if (data.error) throw new Error(data.error);
     renderResultContent(data.content);
-    setStatus(`✅ 生成完成（${elapsed}s）`, false);
+    setStatus(`✅ 生成完成（${elapsed}s）`, "success");
   } catch (err) {
     stopTimer();
-    setStatus(mapError(err.message), true);
+    if (err?.partialContent) {
+      renderResultContent(err.partialContent);
+      setCopyReady(Boolean(err.partialContent.trim()));
+    }
+    setStatus(mapError(err.message), "error");
   } finally {
     setLoading(false);
   }
 }
 
+async function streamGenerate(payload, mode) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), CLIENT_TIMEOUT_MS);
+  let accumulated = "";
+
+  try {
+    const response = await fetch(STREAM_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
+
+    const contentType = response.headers.get("content-type") || "";
+    if (!response.ok) {
+      const errText = contentType.includes("application/json")
+        ? ((await response.json())?.error || `HTTP ${response.status}`)
+        : (await response.text()) || `HTTP ${response.status}`;
+      throw new Error(errText);
+    }
+
+    if (!response.body || !contentType.includes("text/event-stream")) {
+      throw new Error("流式响应不可用");
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true }).replace(/\r/g, "");
+      let boundary = buffer.indexOf("\n\n");
+      while (boundary !== -1) {
+        const rawEvent = buffer.slice(0, boundary);
+        buffer = buffer.slice(boundary + 2);
+        boundary = buffer.indexOf("\n\n");
+
+        const dataLines = rawEvent
+          .split("\n")
+          .filter((line) => line.startsWith("data:"))
+          .map((line) => line.slice(5).trim())
+          .filter(Boolean);
+
+        if (!dataLines.length) continue;
+
+        let eventPayload;
+        try {
+          eventPayload = JSON.parse(dataLines.join("\n"));
+        } catch (err) {
+          continue;
+        }
+
+        if (eventPayload.type === "status" || eventPayload.type === "ready") {
+          setStatus(mapServerStage(eventPayload, mode), "info");
+          continue;
+        }
+
+        if (eventPayload.type === "delta") {
+          accumulated += eventPayload.content || "";
+          if (accumulated) {
+            latestGeneratedContent = accumulated;
+            renderStreamingPreview(accumulated);
+            updateProgressFromContent(accumulated, mode);
+          }
+          continue;
+        }
+
+        if (eventPayload.type === "error") {
+          const err = new Error(eventPayload.error || "流式生成失败");
+          if (accumulated) err.partialContent = accumulated;
+          throw err;
+        }
+      }
+    }
+
+    if (!accumulated.trim()) {
+      throw new Error("流式生成没有返回正文");
+    }
+
+    return { content: accumulated };
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+async function generateFallback(payload) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), CLIENT_TIMEOUT_MS);
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      throw new Error(errData.error || `HTTP ${response.status}`);
+    }
+
+    return await response.json();
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 function mapError(err) {
-  if (err.includes('API')) return 'API 调用失败，请稍后重试';
-  if (err.includes('网络') || err.includes('Failed')) return '网络错误，请检查网络连接';
-  if (err.includes('至少')) return err;
-  return err || '生成失败，请稍后重试';
+  if (err.includes("API")) return "API 调用失败，请稍后重试";
+  if (err.includes("网络") || err.includes("Failed")) return "网络错误，请检查网络连接";
+  if (err.includes("至少")) return err;
+  return err || "生成失败，请稍后重试";
 }
 
 function setLoading(loading) {
-  if (generateBtn) { generateBtn.disabled = loading; generateBtn.textContent = loading ? '生成中...' : '✨ 生成设定'; }
+  if (generateBtn) {
+    generateBtn.disabled = loading;
+    generateBtn.textContent = loading ? "生成中..." : "✨ 生成设定";
+  }
+  if (!loading && latestGeneratedContent.trim()) {
+    setCopyReady(true);
+  }
 }
 
-function setStatus(text, isError) {
-  if (statusEl) { statusEl.textContent = text; statusEl.style.background = isError ? '#3a1a1a' : '#1a3a2a'; }
+function setStatus(text, kind = "info") {
+  statusBaseText = text || "";
+  statusKind = kind;
+  refreshStatus();
+}
+
+function renderStreamingPreview(text) {
+  if (!resultEl) return;
+  pendingStreamText = text;
+  if (streamRenderRaf) return;
+  streamRenderRaf = requestAnimationFrame(() => {
+    streamRenderRaf = 0;
+    resultEl.style.display = "block";
+    resultEl.innerHTML = renderMarkdownToHtml(pendingStreamText);
+  });
 }
 
 function renderResultContent(text) {
   if (!resultEl) return;
-  resultEl.style.display = 'block';
-  resultEl.innerHTML = text.split('\n').map(line => {
-    if (!line.trim()) return `<div class="result-line result-blank"></div>`;
-    if (/^#{1,6}\s+/.test(line)) return `<h4 class="result-title">${escapeHtml(line.replace(/^#{1,6}\s+/, ""))}</h4>`;
-    if (/^[-*]\s+/.test(line)) return `<div class="result-line result-bullet">${escapeHtml(line)}</div>`;
-    return `<div class="result-line">${escapeHtml(line)}</div>`;
-  }).join("");
-  
-  // 运行质量审计
-  const failures = auditContent(text);
+  latestGeneratedContent = String(text || "");
+  resultEl.style.display = "block";
+  resultEl.innerHTML = renderMarkdownToHtml(text);
+  const failures = auditContent(latestGeneratedContent);
   renderAuditResult(failures);
-  
-  resultEl.scrollIntoView({ behavior: 'smooth' });
+  resultEl.scrollIntoView({ behavior: "smooth" });
+  setCopyReady(Boolean(latestGeneratedContent.trim()));
 }
 
 function escapeHtml(str) {
   return String(str || "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
 }
 
-// ========== 质量审计功能 (Phase 1) ==========
-// 基于 cn-failure-atlas 的失败类型检查
+function normalizeGeneratedText(text) {
+  let normalized = String(text || "");
+  normalized = normalized.replace(/在\s*([A-Z]\d)\s*之外(?:再)?(?:叠加|加上)\s*([A-Z]\d)/g, (match, current, next) => {
+    return current[0] === next[0] ? `将当前${current[0]}轴选项从${current}改为${next}` : match;
+  });
+  return normalized;
+}
+
+function renderInlineMarkdown(text) {
+  let html = escapeHtml(text);
+  html = html.replace(/`([^`\n]+)`/g, "<code>$1</code>");
+  html = html.replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/\*([^*\n]+)\*/g, "<em>$1</em>");
+  return html;
+}
+
+function renderMarkdownToHtml(text) {
+  const lines = normalizeGeneratedText(text).replace(/\r/g, "").split("\n");
+  const html = [];
+  let paragraph = [];
+  let listType = null;
+  let listItems = [];
+  let quoteLines = [];
+
+  const flushParagraph = () => {
+    if (!paragraph.length) return;
+    html.push(`<p class="result-paragraph">${paragraph.map(renderInlineMarkdown).join("<br>")}</p>`);
+    paragraph = [];
+  };
+
+  const flushList = () => {
+    if (!listType) return;
+    const tag = listType === "ol" ? "ol" : "ul";
+    html.push(`<${tag} class="result-list result-list-${listType}">${listItems.map((item) => `<li>${renderInlineMarkdown(item)}</li>`).join("")}</${tag}>`);
+    listType = null;
+    listItems = [];
+  };
+
+  const flushQuote = () => {
+    if (!quoteLines.length) return;
+    html.push(`<blockquote class="result-quote">${quoteLines.map(renderInlineMarkdown).join("<br>")}</blockquote>`);
+    quoteLines = [];
+  };
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      flushParagraph();
+      flushList();
+      flushQuote();
+      continue;
+    }
+
+    if (/^(-{3,}|\*{3,}|_{3,})$/.test(trimmed)) {
+      flushParagraph();
+      flushList();
+      flushQuote();
+      html.push('<hr class="result-hr" />');
+      continue;
+    }
+
+    if (/^#{1,6}\s+/.test(trimmed)) {
+      flushParagraph();
+      flushList();
+      flushQuote();
+      const level = Math.min(6, (trimmed.match(/^#+/) || ["#"])[0].length);
+      const tag = level <= 2 ? "h2" : "h3";
+      const title = trimmed.replace(/^#{1,6}\s+/, "");
+      html.push(`<${tag} class="result-title result-title-${level}">${renderInlineMarkdown(title)}</${tag}>`);
+      continue;
+    }
+
+    if (/^\d+\.\s+/.test(trimmed)) {
+      flushParagraph();
+      flushQuote();
+      if (listType !== "ol") {
+        flushList();
+        listType = "ol";
+      }
+      listItems.push(trimmed.replace(/^\d+\.\s+/, ""));
+      continue;
+    }
+
+    if (/^[-*]\s+/.test(trimmed)) {
+      flushParagraph();
+      flushQuote();
+      if (listType !== "ul") {
+        flushList();
+        listType = "ul";
+      }
+      listItems.push(trimmed.replace(/^[-*]\s+/, ""));
+      continue;
+    }
+
+    if (/^>\s?/.test(trimmed)) {
+      flushParagraph();
+      flushList();
+      quoteLines.push(trimmed.replace(/^>\s?/, ""));
+      continue;
+    }
+
+    paragraph.push(trimmed);
+  }
+
+  flushParagraph();
+  flushList();
+  flushQuote();
+
+  return html.join("");
+}
 
 const FAILURE_PATTERNS = {
   therapeutic_language: {
     keywords: ["和解", "接纳", "边界", "内在小孩", "阴影整合", "治愈", "疗愈"],
-    message: "检测到现代心理治疗话语，可能不适合古代/奇幻背景",
+    message: "检测到现代心理治疗话语，可能不适合古代或奇幻背景",
     type: "therapeutic_language_intrusion"
   },
   emotional_labor: {
@@ -450,71 +738,147 @@ const FAILURE_PATTERNS = {
 
 function auditContent(content) {
   const failures = [];
-  const lowerContent = content.toLowerCase();
-  
-  Object.entries(FAILURE_PATTERNS).forEach(([key, pattern]) => {
-    const matches = pattern.keywords.filter(kw => content.includes(kw));
+  Object.values(FAILURE_PATTERNS).forEach((pattern) => {
+    const matches = pattern.keywords.filter((kw) => content.includes(kw));
     if (matches.length > 0) {
       failures.push({
         type: pattern.type,
         message: pattern.message,
         keywords: matches,
-        severity: matches.length > 2 ? 'high' : 'medium'
+        severity: matches.length > 2 ? "high" : "medium"
       });
     }
   });
-  
   return failures;
 }
 
 function renderAuditResult(failures) {
   if (!resultEl) return;
-  
+
   const auditDiv = document.createElement("div");
   auditDiv.className = "audit-result";
-  auditDiv.style.cssText = "margin-top:20px;padding:20px;background:#1a1a20;border-radius:12px;border:1px solid #333;";
-  
+  auditDiv.style.cssText = "margin-top:20px;padding:20px;background:#14141b;border-radius:12px;border:1px solid #2b2b38;";
+
   if (failures.length === 0) {
     auditDiv.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
         <span style="font-size:20px;">✅</span>
         <h4 style="color:#00d4ff;margin:0;font-size:16px;">质量审计通过</h4>
       </div>
-      <p style="color:#aaa;font-size:14px;margin:0;">未检测到常见失败模式</p>
+      <p style="color:#aaa;font-size:14px;margin:0;">未检测到当前前端已实现的常见失败模式</p>
     `;
   } else {
-    const severityColor = { high: '#ff4444', medium: '#ffaa00' };
+    const severityColor = { high: "#ff4444", medium: "#ffaa00" };
     auditDiv.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
         <span style="font-size:20px;">⚠️</span>
         <h4 style="color:#ffaa00;margin:0;font-size:16px;">检测到 ${failures.length} 个潜在问题</h4>
       </div>
-      ${failures.map(f => `
-        <div style="background:#25252d;padding:14px;border-radius:8px;margin-bottom:12px;border-left:3px solid ${severityColor[f.severity]};">
+      ${failures.map((f) => `
+        <div style="background:#20202a;padding:14px;border-radius:8px;margin-bottom:12px;border-left:3px solid ${severityColor[f.severity]};">
           <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;">
             <div style="color:#fff;font-weight:600;font-size:14px;">${f.type}</div>
             <span style="background:${severityColor[f.severity]};color:#000;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">${f.severity.toUpperCase()}</span>
           </div>
           <p style="color:#aaa;font-size:13px;margin:0 0 8px 0;">${f.message}</p>
           <div style="color:#888;font-size:12px;">
-            <strong>触发词：</strong>${f.keywords.map(k => `<span style="background:#333;padding:2px 6px;border-radius:3px;margin-right:6px;">${k}</span>`).join('')}
+            <strong>触发词：</strong>${f.keywords.map((k) => `<span style="background:#333;padding:2px 6px;border-radius:3px;margin-right:6px;">${k}</span>`).join("")}
           </div>
         </div>
-      `).join('')}
+      `).join("")}
       <div style="margin-top:16px;padding-top:16px;border-top:1px solid #333;">
         <p style="color:#888;font-size:13px;margin:0;">
-          💡 <strong>建议：</strong>这些是潜在问题而非绝对错误。如符合创作意图可忽略。
-          <br>详见 <a href="https://github.com/Yuqing-Cai/cn-failure-atlas" target="_blank" style="color:#00d4ff;">失败图谱文档</a>
+          这些是潜在问题提示，不是绝对错误。如符合创作意图可忽略。
+          <br>参考：<a href="https://github.com/Yuqing-Cai/cn-failure-atlas" target="_blank" rel="noreferrer" style="color:#00d4ff;">cn-failure-atlas</a>
         </p>
       </div>
     `;
   }
-  
-  // 移除旧的审计结果（如果有）
-  const oldAudit = resultEl.querySelector('.audit-result');
-  if (oldAudit) oldAudit.remove();
-  
+
   resultEl.appendChild(auditDiv);
+}
+
+function getStageLabel(mode, stageIndex, fallback) {
+  const stages = PROGRESS_STAGES[mode] || PROGRESS_STAGES.opening;
+  return stages[stageIndex]?.label || fallback;
+}
+
+function mapServerStage(eventPayload, mode) {
+  const phase = String(eventPayload?.phase || eventPayload?.type || "");
+  if (phase === "thinking" || phase === "ready") {
+    activeStageLabel = getStageLabel(mode, 0, eventPayload?.message || "正在规划设定结构");
+    return activeStageLabel;
+  }
+  if (phase === "writing") {
+    activeStageLabel = getStageLabel(mode, 1, eventPayload?.message || "正在生成正文");
+    return activeStageLabel;
+  }
+  if (phase === "continuing") {
+    const tail = eventPayload?.message ? `：${eventPayload.message.replace(/^检测到正文未写完，正在补齐剩余章节：?/, "")}` : "";
+    activeStageLabel = `${getStageLabel(mode, mode === "timeline" ? 3 : 2, "正在补齐剩余章节")}${tail}`;
+    return activeStageLabel;
+  }
+  return eventPayload?.message || "正在生成";
+}
+
+function updateProgressFromContent(text, mode) {
+  const content = String(text || "");
+  let nextLabel = "";
+  if (mode === "timeline") {
+    if (content.includes("时间线") || content.includes("终局兑现")) {
+      nextLabel = getStageLabel(mode, 3, "");
+    } else if (content.includes("开场场景") || content.includes("开场金句") || content.includes("男主人设限制") || content.includes("权衡说明")) {
+      nextLabel = getStageLabel(mode, 2, "");
+    } else if (content.includes("男主档案") || content.includes("世界切片") || content.includes("关系动力学") || content.includes("轴映射说明")) {
+      nextLabel = getStageLabel(mode, 1, "");
+    }
+  } else if (content.includes("开场场景") || content.includes("开场金句") || content.includes("男主人设限制") || content.includes("权衡说明") || content.includes("重生成建议")) {
+    nextLabel = getStageLabel(mode, 2, "");
+  } else if (content.includes("男主档案") || content.includes("世界切片") || content.includes("关系动力学") || content.includes("轴映射说明")) {
+    nextLabel = getStageLabel(mode, 1, "");
+  }
+
+  if (nextLabel && nextLabel !== activeStageLabel) {
+    activeStageLabel = nextLabel;
+    setStatus(nextLabel, "info");
+  }
+}
+
+function setCopyReady(enabled) {
+  if (!copyBtn) return;
+  copyBtn.disabled = !enabled;
+  if (!enabled) {
+    if (copyResetTimer) clearTimeout(copyResetTimer);
+    copyBtn.textContent = "复制结果";
+  }
+}
+
+async function copyResult() {
+  const text = String(latestGeneratedContent || "").trim();
+  if (!text) return;
+
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const ghost = document.createElement("textarea");
+      ghost.value = text;
+      ghost.setAttribute("readonly", "");
+      ghost.style.position = "fixed";
+      ghost.style.opacity = "0";
+      document.body.appendChild(ghost);
+      ghost.select();
+      document.execCommand("copy");
+      ghost.remove();
+    }
+    if (copyResetTimer) clearTimeout(copyResetTimer);
+    if (copyBtn) copyBtn.textContent = "已复制";
+    copyResetTimer = window.setTimeout(() => {
+      if (copyBtn) copyBtn.textContent = "复制结果";
+    }, 1600);
+  } catch (err) {
+    setStatus("复制失败，请手动选择文本", "error");
+  }
 }
 
 function getCode(optionLabel) {

@@ -27,13 +27,34 @@
     .btn { background: #00d4ff; color: #000; border: none; padding: 12px 30px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
     .btn:hover { background: #00b8e6; }
     .btn:disabled { background: #555; cursor: not-allowed; }
+    .ghost-btn { background: transparent; color: #9ddcff; border: 1px solid #2f4f66; padding: 10px 14px; font-size: 13px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .ghost-btn:hover { border-color: #4a7fa8; color: #d7efff; background: #182430; }
+    .ghost-btn:disabled { cursor: not-allowed; opacity: 0.45; }
     .status { text-align: center; padding: 10px; margin-bottom: 20px; border-radius: 8px; background: #1a1a20; }
-    .result-panel { background: #1a1a20; border-radius: 8px; padding: 20px; margin-top: 20px; white-space: pre-wrap; }
-    .result-title { color: #00d4ff; margin: 15px 0 8px; }
-    .result-line { margin: 6px 0; }
-    .result-bullet { margin-left: 20px; color: #aaa; }
-    .extra-input { width: 100%; padding: 12px; background: #25252d; border: 1px solid #333; color: #fff; border-radius: 8px; margin-bottom: 20px; }
+    .result-panel { background: #1a1a20; border-radius: 8px; padding: 20px; margin-top: 20px; white-space: normal; overflow-wrap: anywhere; }
+    .result-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; }
+    .result-toolbar-title { color: #7ea8c6; font-size: 13px; letter-spacing: 0.02em; }
+    .result-title { color: #00d4ff; margin: 18px 0 10px; line-height: 1.35; }
+    .result-title-1, .result-title-2 { font-size: 22px; }
+    .result-title-3, .result-title-4, .result-title-5, .result-title-6 { font-size: 18px; }
+    .result-paragraph { margin: 10px 0; color: #d8d8de; }
+    .result-list { margin: 10px 0 14px 22px; padding-left: 18px; }
+    .result-list li { margin: 6px 0; color: #d8d8de; }
+    .result-quote { margin: 14px 0; padding: 10px 14px; border-left: 3px solid #00d4ff; background: #20202a; color: #b8dfff; border-radius: 0 8px 8px 0; }
+    .result-hr { border: none; border-top: 1px solid #343445; margin: 18px 0; }
+    .result-panel strong { color: #ffffff; font-weight: 700; }
+    .result-panel em { color: #9ddcff; font-style: normal; }
+    .result-panel code { background: #25252d; border: 1px solid #30303c; border-radius: 4px; padding: 1px 6px; color: #ffd479; font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.95em; }
+    .control-grid { margin-bottom: 20px; }
+    .control-row { display: grid; grid-template-columns: 240px 1fr; gap: 15px; align-items: start; }
+    .field-label { display: block; margin-bottom: 5px; color: #888; font-size: 13px; }
+    .control-input, .control-textarea { width: 100%; padding: 10px; background: #25252d; border: 1px solid #333; color: #fff; border-radius: 6px; font-size: 14px; }
+    .control-textarea { min-height: 132px; resize: vertical; line-height: 1.55; }
+    .prompt-note { margin-top: 6px; color: #6f6f7f; font-size: 12px; line-height: 1.5; }
     footer { text-align: center; margin-top: 40px; color: #666; font-size: 12px; }
+    @media (max-width: 720px) {
+      .control-row { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -43,24 +64,31 @@
     
     <div id="axisContainer"></div>
     
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-      <div>
-        <label style="display: block; margin-bottom: 5px; color: #888; font-size: 13px;">选择模型</label>
-        <select id="modelSelect" style="width: 100%; padding: 10px; background: #25252d; border: 1px solid #333; color: #fff; border-radius: 6px; font-size: 14px;"></select>
-      </div>
-      <div>
-        <label style="display: block; margin-bottom: 5px; color: #888; font-size: 13px;">补充偏好（可选）</label>
-        <input id="extraPrompt" type="text" style="width: 100%; padding: 10px; background: #25252d; border: 1px solid #333; color: #fff; border-radius: 6px; font-size: 14px;" placeholder="例如：更强烈的冲突感..."/>
+    <div class="control-grid">
+      <div class="control-row">
+        <div>
+          <label class="field-label">选择模型</label>
+          <select id="modelSelect" class="control-input"></select>
+        </div>
+        <div>
+          <label class="field-label">补充偏好（可选）</label>
+          <textarea id="extraPrompt" class="control-textarea" rows="6" placeholder="例如：&#10;- 世界观偏冷感赛博，但关系推进要克制&#10;- 男主不说教，不PUA，不浪子回头式洗白&#10;- 开场用雨夜、便利店、低照度灯箱&#10;- 强化时间代价与终局回收"></textarea>
+          <p class="prompt-note">支持多行输入。可写雷点、世界观偏好、情感边界、语气要求或你不想看到的内容。</p>
+        </div>
       </div>
     </div>
     
     <div class="controls">
-      <p id="selectedCount" style="margin-bottom: 15px; color: #888;">已选 0 项</p>
+      <p id="selectedCount" style="margin-bottom: 15px; color: #888;">已选 0 项 · 结构轴 0 项</p>
       <button id="generateBtn" class="btn">✨ 生成设定</button>
     </div>
     
     <div id="status" class="status"></div>
-    
+
+    <div class="result-toolbar">
+      <div class="result-toolbar-title">生成结果</div>
+      <button id="copyBtn" type="button" class="ghost-btn" disabled>复制结果</button>
+    </div>
     <div id="result" class="result-panel" style="display:none;"></div>
     
     <footer>
@@ -69,6 +97,6 @@
     </footer>
   </div>
   
-  <script src="app.js?v=2"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>
