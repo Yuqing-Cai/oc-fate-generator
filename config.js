@@ -18,7 +18,7 @@ const AVAILABLE_MODELS = [
 
 const DEFAULT_MODEL = "Pro/MiniMaxAI/MiniMax-M2.5";
 
-const PROGRESS_STAGES = {
+let PROGRESS_STAGES = {
   opening: [
     { label: "阶段 1/3：正在规划设定结构", message: "正在规划设定结构" },
     { label: "阶段 2/3：正在生成人设与世界观", message: "正在生成人设与世界观" },

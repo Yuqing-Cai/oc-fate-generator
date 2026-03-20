@@ -1,5 +1,5 @@
 // app.js - Main application logic
-// Dependencies: axes-data.js, config.js, renderer.js, audit.js
+// Dependencies: axes-data.js, i18n.js, config.js, renderer.js
 
 let axisContainer, selectedCountEl, generateBtn, resultEl, statusEl, extraPromptInput, modelSelect, copyBtn;
 let timerInterval = null, startTime = null, statusBaseText = "", statusKind = "neutral";
@@ -18,12 +18,90 @@ document.addEventListener("DOMContentLoaded", () => {
   extraPromptInput = document.getElementById("extraPrompt");
   modelSelect = document.getElementById("modelSelect");
   copyBtn = document.getElementById("copyBtn");
+
+  renderStaticUI();
   renderAxes();
   renderModelSelector();
   updateSelectedCount();
   generateBtn.addEventListener("click", generate);
   if (copyBtn) copyBtn.addEventListener("click", copyResult);
+
+  // Language toggle
+  const langToggle = document.getElementById("langToggle");
+  if (langToggle) {
+    langToggle.addEventListener("click", () => {
+      setLang(currentLang === "zh" ? "en" : "zh");
+    });
+  }
 });
+
+// Called by i18n.js setLang() to refresh the entire UI
+function rerenderAll() {
+  renderStaticUI();
+  // Preserve selections
+  const savedSelections = getSelected().map(s => ({ axis: s.axis, code: s.code }));
+  if (axisContainer) axisContainer.innerHTML = "";
+  renderAxes();
+  // Restore selections
+  savedSelections.forEach(({ axis, code }) => {
+    const cb = axisContainer.querySelector(`input[data-axis='${axis}'][data-code='${code}']`);
+    if (cb) cb.checked = true;
+  });
+  renderModelSelector();
+  updateSelectedCount();
+  updateLangToggle();
+}
+
+function renderStaticUI() {
+  const title = document.querySelector("h1");
+  if (title) title.textContent = t("pageTitle");
+
+  const subtitle = document.querySelector(".subtitle");
+  if (subtitle) subtitle.textContent = t("subtitle");
+
+  const modelLabel = document.querySelector('label[for="modelSelect"], .field-label');
+  // Update labels by finding them via DOM structure
+  const controlRow = document.querySelector(".control-row");
+  if (controlRow) {
+    const labels = controlRow.querySelectorAll(".field-label");
+    if (labels[0]) labels[0].textContent = t("selectModel");
+    if (labels[1]) labels[1].textContent = t("extraPromptLabel");
+  }
+
+  if (extraPromptInput) {
+    extraPromptInput.placeholder = t("extraPromptPlaceholder");
+  }
+
+  const promptNote = document.querySelector(".prompt-note");
+  if (promptNote) promptNote.textContent = t("extraPromptNote");
+
+  if (generateBtn && !generateBtn.disabled) {
+    generateBtn.textContent = t("generateBtn");
+  }
+
+  const toolbarTitle = document.querySelector(".result-toolbar-title");
+  if (toolbarTitle) toolbarTitle.textContent = t("resultToolbarTitle");
+
+  if (copyBtn && !copyBtn.disabled) {
+    copyBtn.textContent = t("copyBtn");
+  }
+
+  const footer = document.querySelector("footer");
+  if (footer) {
+    const footerP = footer.querySelector("p");
+    if (footerP) footerP.textContent = t("footerLicense");
+  }
+
+  updateLangToggle();
+}
+
+function updateLangToggle() {
+  const langToggle = document.getElementById("langToggle");
+  if (langToggle) {
+    langToggle.textContent = currentLang === "zh" ? "EN" : "中文";
+    langToggle.title = currentLang === "zh" ? "Switch to English" : "切换到中文";
+  }
+}
 
 // --- Timer ---
 
@@ -64,7 +142,10 @@ function refreshStatus() {
 function renderModelSelector() {
   if (!modelSelect) return;
   const savedModel = localStorage.getItem("oc_model") || DEFAULT_MODEL;
-  modelSelect.innerHTML = AVAILABLE_MODELS.map((m) => `<option value="${m.value}" ${m.value === savedModel ? "selected" : ""}>${m.label}</option>`).join("");
+  modelSelect.innerHTML = AVAILABLE_MODELS.map((m) => {
+    const label = currentLang === "en" && MODEL_LABELS_EN?.[m.value] ? MODEL_LABELS_EN[m.value] : m.label;
+    return `<option value="${m.value}" ${m.value === savedModel ? "selected" : ""}>${label}</option>`;
+  }).join("");
   modelSelect.addEventListener("change", () => { localStorage.setItem("oc_model", modelSelect.value); });
 }
 
@@ -77,7 +158,7 @@ function renderAxes() {
     group.className = "axis-group";
     const head = document.createElement("div");
     head.className = "axis-head";
-    head.innerHTML = `<div class="axis-head-left"><h3>${AXIS_LABELS[axisName] || axisName}</h3><button class="help-btn" data-axis="${axisName}" title="查看说明">?</button></div><span class="chip">${Object.keys(cfg.options).length}项</span>`;
+    head.innerHTML = `<div class="axis-head-left"><h3>${AXIS_LABELS[axisName] || axisName}</h3><button class="help-btn" data-axis="${axisName}" title="${t('helpBtnTitle')}">?</button></div><span class="chip">${t('chip')(Object.keys(cfg.options).length)}</span>`;
     const optionsWrap = document.createElement("div");
     optionsWrap.className = "options";
     Object.entries(cfg.options).forEach(([opt, detail], index) => {
@@ -117,7 +198,7 @@ function getCoreSelectionCount(selected = getSelected()) {
 function updateSelectedCount() {
   const selected = getSelected();
   const coreCount = getCoreSelectionCount(selected);
-  if (selectedCountEl) selectedCountEl.textContent = `已选 ${selected.length} 项 · 结构轴 ${coreCount} 项`;
+  if (selectedCountEl) selectedCountEl.textContent = t("selectedCount")(selected.length, coreCount);
   if (generateBtn) generateBtn.disabled = coreCount < 3;
 }
 
@@ -130,7 +211,7 @@ function detectMode(selected) {
 async function generate() {
   const selected = getSelected();
   if (getCoreSelectionCount(selected) < 3) {
-    setStatus("至少选择 3 项非调色板轴要素", "error");
+    setStatus(t("minSelectionError"), "error");
     return;
   }
 
@@ -143,28 +224,28 @@ async function generate() {
     resultEl.style.display = "block";
     resultEl.textContent = "";
   }
-  setStatus(getStageLabel(activeMode, 0, "正在提交请求"), "info");
+  setStatus(getStageLabel(activeMode, 0, t("submitting")), "info");
 
   setLoading(true);
   startTimer();
   try {
     const model = modelSelect?.value || DEFAULT_MODEL;
     const extraPrompt = extraPromptInput?.value || "";
-    const payload = { selections: selected, model, extraPrompt };
+    const payload = { selections: selected, model, extraPrompt, lang: currentLang };
     let data;
 
     try {
       data = await streamGenerate(payload, activeMode);
     } catch (err) {
       if (err?.partialContent) throw err;
-      setStatus(getStageLabel(activeMode, 0, "流式不可用，切回整段返回"), "info");
+      setStatus(getStageLabel(activeMode, 0, t("streamFallback")), "info");
       data = await generateFallback(payload);
     }
 
     const elapsed = stopTimer();
     if (data.error) throw new Error(data.error);
     renderResultContent(data.content);
-    setStatus(`✅ 生成完成（${elapsed}s）`, "success");
+    setStatus(t("generateDone")(elapsed), "success");
   } catch (err) {
     stopTimer();
     if (err?.partialContent) {
@@ -199,7 +280,7 @@ async function streamGenerate(payload, mode) {
     }
 
     if (!response.body || !contentType.includes("text/event-stream")) {
-      throw new Error("流式响应不可用");
+      throw new Error(t("streamUnavail"));
     }
 
     const reader = response.body.getReader();
@@ -249,7 +330,7 @@ async function streamGenerate(payload, mode) {
         }
 
         if (eventPayload.type === "error") {
-          const err = new Error(eventPayload.error || "流式生成失败");
+          const err = new Error(eventPayload.error || t("streamFail"));
           if (accumulated) err.partialContent = accumulated;
           throw err;
         }
@@ -257,7 +338,7 @@ async function streamGenerate(payload, mode) {
     }
 
     if (!accumulated.trim()) {
-      throw new Error("流式生成没有返回正文");
+      throw new Error(t("streamEmpty"));
     }
 
     return { content: accumulated };
@@ -291,16 +372,16 @@ async function generateFallback(payload) {
 // --- UI Helpers ---
 
 function mapError(err) {
-  if (err.includes("API")) return "API 调用失败，请稍后重试";
-  if (err.includes("网络") || err.includes("Failed")) return "网络错误，请检查网络连接";
-  if (err.includes("至少")) return err;
-  return err || "生成失败，请稍后重试";
+  if (err.includes("API")) return t("apiError");
+  if (err.includes("网络") || err.includes("Failed") || err.includes("Network")) return t("networkError");
+  if (err.includes("至少") || err.includes("Select at least")) return err;
+  return err || t("generateFail");
 }
 
 function setLoading(loading) {
   if (generateBtn) {
     generateBtn.disabled = loading;
-    generateBtn.textContent = loading ? "生成中..." : "✨ 生成设定";
+    generateBtn.textContent = loading ? t("generatingBtn") : t("generateBtn");
   }
   if (!loading && latestGeneratedContent.trim()) {
     setCopyReady(true);
@@ -343,35 +424,35 @@ function getStageLabel(mode, stageIndex, fallback) {
 function mapServerStage(eventPayload, mode) {
   const phase = String(eventPayload?.phase || eventPayload?.type || "");
   if (phase === "thinking" || phase === "ready") {
-    activeStageLabel = getStageLabel(mode, 0, eventPayload?.message || "正在规划设定结构");
+    activeStageLabel = getStageLabel(mode, 0, eventPayload?.message || (currentLang === "en" ? "Planning structure" : "正在规划设定结构"));
     return activeStageLabel;
   }
   if (phase === "writing") {
-    activeStageLabel = getStageLabel(mode, 1, eventPayload?.message || "正在生成正文");
+    activeStageLabel = getStageLabel(mode, 1, eventPayload?.message || (currentLang === "en" ? "Generating content" : "正在生成正文"));
     return activeStageLabel;
   }
   if (phase === "continuing") {
     const tail = eventPayload?.message ? `：${eventPayload.message.replace(/^检测到正文未写完，正在补齐剩余章节：?/, "")}` : "";
-    activeStageLabel = `${getStageLabel(mode, mode === "timeline" ? 3 : 2, "正在补齐剩余章节")}${tail}`;
+    activeStageLabel = `${getStageLabel(mode, mode === "timeline" ? 3 : 2, currentLang === "en" ? "Completing remaining sections" : "正在补齐剩余章节")}${tail}`;
     return activeStageLabel;
   }
-  return eventPayload?.message || "正在生成";
+  return eventPayload?.message || (currentLang === "en" ? "Generating" : "正在生成");
 }
 
 function updateProgressFromContent(text, mode) {
   const content = String(text || "");
   let nextLabel = "";
   if (mode === "timeline") {
-    if (content.includes("时间线") || content.includes("终局兑现")) {
+    if (content.includes("时间线") || content.includes("终局兑现") || content.includes("Timeline") || content.includes("Finale")) {
       nextLabel = getStageLabel(mode, 3, "");
-    } else if (content.includes("开场场景") || content.includes("开场金句") || content.includes("男主人设限制") || content.includes("权衡说明")) {
+    } else if (content.includes("开场场景") || content.includes("开场金句") || content.includes("Opening Scene") || content.includes("Opening Line")) {
       nextLabel = getStageLabel(mode, 2, "");
-    } else if (content.includes("男主档案") || content.includes("世界切片") || content.includes("关系动力学") || content.includes("轴映射说明")) {
+    } else if (content.includes("男主档案") || content.includes("世界切片") || content.includes("Character Profile") || content.includes("World Slice")) {
       nextLabel = getStageLabel(mode, 1, "");
     }
-  } else if (content.includes("开场场景") || content.includes("开场金句") || content.includes("男主人设限制") || content.includes("权衡说明") || content.includes("重生成建议")) {
+  } else if (content.includes("开场场景") || content.includes("开场金句") || content.includes("Opening Scene") || content.includes("Opening Line")) {
     nextLabel = getStageLabel(mode, 2, "");
-  } else if (content.includes("男主档案") || content.includes("世界切片") || content.includes("关系动力学") || content.includes("轴映射说明")) {
+  } else if (content.includes("男主档案") || content.includes("世界切片") || content.includes("Character Profile") || content.includes("World Slice")) {
     nextLabel = getStageLabel(mode, 1, "");
   }
 
@@ -388,7 +469,7 @@ function setCopyReady(enabled) {
   copyBtn.disabled = !enabled;
   if (!enabled) {
     if (copyResetTimer) clearTimeout(copyResetTimer);
-    copyBtn.textContent = "复制结果";
+    copyBtn.textContent = t("copyBtn");
   }
 }
 
@@ -411,12 +492,12 @@ async function copyResult() {
       ghost.remove();
     }
     if (copyResetTimer) clearTimeout(copyResetTimer);
-    if (copyBtn) copyBtn.textContent = "已复制";
+    if (copyBtn) copyBtn.textContent = t("copiedBtn");
     copyResetTimer = window.setTimeout(() => {
-      if (copyBtn) copyBtn.textContent = "复制结果";
+      if (copyBtn) copyBtn.textContent = t("copyBtn");
     }, 1600);
   } catch (err) {
-    setStatus("复制失败，请手动选择文本", "error");
+    setStatus(t("copyFail"), "error");
   }
 }
 
@@ -427,7 +508,7 @@ function getCode(optionLabel) {
   return m ? m[1] : optionLabel;
 }
 
-// --- Help Modal (refactored: CSS classes + addEventListener) ---
+// --- Help Modal ---
 
 function showAxisHelp(axisName) {
   const cfg = AXES[axisName];
@@ -449,16 +530,16 @@ function showAxisHelp(axisName) {
     <div class="modal-content">
       <div class="modal-header">
         <h2>${AXIS_LABELS[axisName] || axisName}</h2>
-        <button class="modal-close-btn" aria-label="关闭" type="button">&times;</button>
+        <button class="modal-close-btn" aria-label="${t('modalClose')}" type="button">&times;</button>
       </div>
       ${wisdom ? `<div class="modal-wisdom"><p>${wisdom}</p></div>` : ''}
       ${details?.intro ? `<p class="modal-intro">${details.intro}</p>` : ''}
-      <h3 class="modal-section-title">所有选项详解：</h3>
+      <h3 class="modal-section-title">${t('modalAllOptions')}</h3>
       <ul class="modal-options-list">
         ${optionsList}
       </ul>
-      ${links ? `<div class="modal-links"><h4>相关轴联动：</h4><p>${links}</p></div>` : ''}
-      <button class="modal-close-bottom" type="button">关闭</button>
+      ${links ? `<div class="modal-links"><h4>${t('modalLinksTitle')}</h4><p>${links}</p></div>` : ''}
+      <button class="modal-close-bottom" type="button">${t('modalClose')}</button>
     </div>
   `;
 
@@ -466,16 +547,13 @@ function showAxisHelp(axisName) {
     overlay.remove();
   }
 
-  // Close on overlay click (but not on content click)
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) closeModal();
   });
 
-  // Close buttons
   overlay.querySelector('.modal-close-btn').addEventListener('click', closeModal);
   overlay.querySelector('.modal-close-bottom').addEventListener('click', closeModal);
 
-  // Close on Escape key
   function onKeyDown(e) {
     if (e.key === 'Escape') {
       closeModal();

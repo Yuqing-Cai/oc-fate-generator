@@ -1,7 +1,7 @@
 // axes-data.js - Axis definitions and metadata
 // v2.1: unified copywriting style — concrete, specific, no mystification
 
-const AXIS_LABELS = {
+let AXIS_LABELS = {
   W: "W = World（世界）", B: "B = Body（躯壳）", P: "P = Power（力量）", R: "R = Role（立场）",
   M: "M = Motive（动机）", C: "C = Choice（抉择）", E: "E = Expression（表达）", J: "J = Judgment（共情）",
   S: "S = Sanity（心智）", D: "D = Dynamic（权力）", L: "L = Love（关系认知）",
@@ -10,7 +10,7 @@ const AXIS_LABELS = {
   F: "F = Finale（终局）", Palette: "调色板（文本质感）",
 };
 
-const AXIS_WISDOM = {
+let AXIS_WISDOM = {
   W: "W 轴（世界）决定故事的外部阻力——世界越严苛，在一起的代价越高。",
   B: "B 轴（身体）决定他的物理形态——能不能被拥抱，会不会衰老，你们能不能共处同一空间。",
   P: "P 轴（力量）决定他能为你做到什么程度，以及每次动用力量要付出多大代价。",
@@ -31,7 +31,7 @@ const AXIS_WISDOM = {
 };
 
 // 轴之间的联动规则（每个轴只展示相关的）
-const AXIS_LINKS = {
+let AXIS_LINKS = {
   W: "W → C：世界越残酷，抉择越痛。W1 铁律之笼下的抉择是违规的代价，W2 废墟之野下的抉择是生存的代价。",
   B: "B → T：凡人身体 + 非人对象 = 天然存在寿命差。选了 B1 又和非人角色搭配时，T1 几乎是内置的。",
   P: "P → X：力量越大，代价的量级越高。P1 凡人之力的代价是个人层面的（受伤、失去自由）；P3 造物之权的代价是世界层面的（现实扭曲）。",
@@ -51,7 +51,7 @@ const AXIS_LINKS = {
 };
 
 // 完整的轴详细说明
-const AXIS_DETAILS = {
+let AXIS_DETAILS = {
   W: {
     intro: "故事发生在什么样的世界里，外部阻力是什么。世界类型决定了角色面对的具体压力——是制度的压迫、生存的威胁、还是精神的空虚。任何一种世界类型都可以写得日常化，日常感是叙事选择，不是世界类型。",
     options: {
@@ -206,7 +206,7 @@ const AXIS_DETAILS = {
   }
 };
 
-const AXIS_CONNECTIONS = `
+let AXIS_CONNECTIONS = `
 轴与轴的联动规则（重要！）：
 • W（世界）→ C（抉择）：世界越残酷，抉择越痛
 • B（身体）→ T（时间）：凡人身体 + 非人对象 = 天然寿命差
@@ -222,7 +222,7 @@ const AXIS_CONNECTIONS = `
 • X（代价）↔ M（动机）：代价必须与动机呼应
 `;
 
-const AXES = {
+let AXES = {
   W: { desc: "世界阻力", options: { "W1 铁律之笼": "朝堂/军队/财阀，制度压过个人", "W2 废墟之野": "末日/战乱/废土，先活下来", "W3 虚无之海": "物质丰富但精神空洞", "W4 暗面之城": "表面正常，底下有秘密身份", "W5 未知之境": "星际/异世界，未来不可预测", "W6 修罗之场": "选秀/商战/竞技，零和博弈" } },
   B: { desc: "身体形态", options: { "B1 凡人身体": "会受伤、衰老、死亡", "B2 非人身体": "机械/妖灵/异种，感官有壁垒", "B3 超越肉体": "无固定身体，无法被触碰" } },
   P: { desc: "力量量级", options: { "P1 凡人之力": "强但在规则内，救人有限", "P2 规则之上": "能改制度，但有连锁反应", "P3 造物之权": "接近全能，但会扭曲现实" } },
