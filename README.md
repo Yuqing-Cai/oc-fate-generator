@@ -11,6 +11,7 @@ A structured character generator for romance fiction. Instead of throwing a loos
 ### What It Does
 
 - Presents 17 character-design axes with guided options
+- **"Pick for Me"** — randomly selects 3 axes to get you started instantly
 - Validates selections and detects generation mode automatically
 - Streams generated text via SSE with real-time Markdown rendering
 - Supports Chinese and English (toggle in the top-right corner)
@@ -102,6 +103,7 @@ Open `http://localhost:8000`
 ### 功能
 
 - 17 个角色设计轴，每轴附带引导式选项与详细说明
+- **「帮我选轴」** — 随机选 3 个轴，降低选择压力、一键尝鲜
 - 自动校验选择、自动判断生成模式
 - SSE 流式生成，实时 Markdown 渲染
 - 中英双语切换（右上角按钮）

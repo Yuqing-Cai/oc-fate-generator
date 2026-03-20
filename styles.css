@@ -29,9 +29,13 @@ h1 { text-align: center; margin-bottom: 10px; color: #00d4ff; }
 
 /* Controls */
 .controls { text-align: center; margin: 30px 0; }
+.btn-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
 .btn { background: #00d4ff; color: #000; border: none; padding: 12px 30px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 .btn:hover { background: #00b8e6; }
 .btn:disabled { background: #555; cursor: not-allowed; }
+.btn-secondary { background: transparent; color: #00d4ff; border: 2px solid #00d4ff; }
+.btn-secondary:hover { background: rgba(0,212,255,0.1); }
+.btn-secondary:disabled { border-color: #555; color: #555; }
 .ghost-btn { background: transparent; color: #9ddcff; border: 1px solid #2f4f66; padding: 10px 14px; font-size: 13px; border-radius: 8px; cursor: pointer; font-weight: 600; }
 .ghost-btn:hover { border-color: #4a7fa8; color: #d7efff; background: #182430; }
 .ghost-btn:disabled { cursor: not-allowed; opacity: 0.45; }

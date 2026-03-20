@@ -1,7 +1,7 @@
 // app.js - Main application logic
 // Dependencies: axes-data.js, i18n.js, config.js, renderer.js
 
-let axisContainer, selectedCountEl, generateBtn, resultEl, statusEl, extraPromptInput, modelSelect, copyBtn;
+let axisContainer, selectedCountEl, generateBtn, luckyBtn, resultEl, statusEl, extraPromptInput, modelSelect, copyBtn;
 let timerInterval = null, startTime = null, statusBaseText = "", statusKind = "neutral";
 let streamRenderRaf = 0, pendingStreamText = "";
 let latestGeneratedContent = "";
@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   axisContainer = document.getElementById("axisContainer");
   selectedCountEl = document.getElementById("selectedCount");
   generateBtn = document.getElementById("generateBtn");
+  luckyBtn = document.getElementById("luckyBtn");
   resultEl = document.getElementById("result");
   statusEl = document.getElementById("status");
   extraPromptInput = document.getElementById("extraPrompt");
@@ -24,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderModelSelector();
   updateSelectedCount();
   generateBtn.addEventListener("click", generate);
+  if (luckyBtn) luckyBtn.addEventListener("click", luckyPick);
   if (copyBtn) copyBtn.addEventListener("click", copyResult);
 
   // Language toggle
@@ -74,6 +76,10 @@ function renderStaticUI() {
 
   const promptNote = document.querySelector(".prompt-note");
   if (promptNote) promptNote.textContent = t("extraPromptNote");
+
+  if (luckyBtn) {
+    luckyBtn.textContent = t("luckyBtn");
+  }
 
   if (generateBtn && !generateBtn.disabled) {
     generateBtn.textContent = t("generateBtn");
@@ -204,6 +210,38 @@ function updateSelectedCount() {
 
 function detectMode(selected) {
   return selected.some((s) => ["F", "X", "T"].includes(s.axis?.toUpperCase())) ? "timeline" : "opening";
+}
+
+// --- Lucky Pick ---
+
+function luckyPick() {
+  // Clear all current selections
+  axisContainer.querySelectorAll("input[type='checkbox']:checked").forEach((cb) => { cb.checked = false; });
+
+  // Get all non-Palette axis names
+  const axisNames = Object.keys(AXES).filter((a) => a !== "Palette");
+
+  // Shuffle and pick 3
+  const shuffled = axisNames.sort(() => Math.random() - 0.5);
+  const picked = shuffled.slice(0, 3);
+
+  // For each picked axis, select a random option
+  picked.forEach((axisName) => {
+    const checkboxes = Array.from(axisContainer.querySelectorAll(`input[type='checkbox'][data-axis='${axisName}']`));
+    if (!checkboxes.length) return;
+    const randomCb = checkboxes[Math.floor(Math.random() * checkboxes.length)];
+    randomCb.checked = true;
+  });
+
+  updateSelectedCount();
+
+  // Scroll first picked axis into view
+  const firstPicked = axisContainer.querySelector(`input[type='checkbox'][data-axis='${picked[0]}']`);
+  if (firstPicked) {
+    firstPicked.closest(".axis-group")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  setStatus(t("luckyToast")(picked.length), "info");
 }
 
 // --- Generation ---
