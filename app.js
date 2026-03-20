@@ -122,7 +122,7 @@ function updateSelectedCount() {
 }
 
 function detectMode(selected) {
-  return selected.some((s) => ["F", "X", "T", "G"].includes(s.axis?.toUpperCase())) ? "timeline" : "opening";
+  return selected.some((s) => ["F", "X", "T"].includes(s.axis?.toUpperCase())) ? "timeline" : "opening";
 }
 
 // --- Generation ---
