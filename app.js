@@ -1,5 +1,5 @@
 // app.js - Main application logic
-// Dependencies: axes-data.js, i18n.js, config.js, renderer.js
+// Dependencies: axes-data.js, config.js, i18n.js, renderer.js
 
 let axisContainer, selectedCountEl, generateBtn, luckyBtn, resultEl, statusEl, extraPromptInput, modelSelect, copyBtn;
 let timerInterval = null, startTime = null, statusBaseText = "", statusKind = "neutral";
