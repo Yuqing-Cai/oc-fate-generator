@@ -337,8 +337,8 @@ const PROGRESS_STAGES_EN = {
 };
 
 const MODEL_LABELS_EN = {
-  "Pro/MiniMaxAI/MiniMax-M2.5": "MiniMax M2.5 (Recommended, fast)",
-  "Pro/zai-org/GLM-5": "GLM-5 (Balanced)",
+  "Pro/zai-org/GLM-5": "GLM-5 (Recommended)",
+  "Pro/MiniMaxAI/MiniMax-M2.5": "MiniMax M2.5 (Fast)",
   "Pro/moonshotai/Kimi-K2.5": "Kimi K2.5",
   "Pro/moonshotai/Kimi-K2-Instruct-0905": "Kimi K2 Instruct",
   "Pro/deepseek-ai/DeepSeek-V3.2": "DeepSeek V3.2 (Latest)",
