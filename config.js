@@ -6,8 +6,8 @@ const STREAM_API_URL = `${API_BASE_URL}/generate-stream`;
 const CLIENT_TIMEOUT_MS = 270000;
 
 const AVAILABLE_MODELS = [
-  { value: "Pro/MiniMaxAI/MiniMax-M2.5", label: "MiniMax M2.5 (推荐，快)" },
-  { value: "Pro/zai-org/GLM-5", label: "GLM-5 (均衡)" },
+  { value: "Pro/zai-org/GLM-5", label: "GLM-5 (推荐)" },
+  { value: "Pro/MiniMaxAI/MiniMax-M2.5", label: "MiniMax M2.5 (快)" },
   { value: "Pro/moonshotai/Kimi-K2.5", label: "Kimi K2.5" },
   { value: "Pro/moonshotai/Kimi-K2-Instruct-0905", label: "Kimi K2 Instruct" },
   { value: "Pro/deepseek-ai/DeepSeek-V3.2", label: "DeepSeek V3.2 (最新)" },
@@ -16,7 +16,7 @@ const AVAILABLE_MODELS = [
   { value: "Pro/zai-org/GLM-4.7", label: "GLM-4.7" },
 ];
 
-const DEFAULT_MODEL = "Pro/MiniMaxAI/MiniMax-M2.5";
+const DEFAULT_MODEL = "Pro/zai-org/GLM-5";
 
 let PROGRESS_STAGES = {
   opening: [
