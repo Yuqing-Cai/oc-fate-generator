@@ -65,6 +65,20 @@ Axes aren't independent tags — they form a causal web:
 - **Opening** — When F / X / T are not selected. Outputs character profile + opening scene.
 - **Timeline** — When any of F / X / T are selected. Outputs full fate arc, cost chain, and finale.
 
+### Quality Constraints
+
+The backend prompt enforces a set of structural and literary constraints informed by [cn-failure-atlas](https://github.com/Yuqing-Cai/cn-failure-atlas), a taxonomy of LLM fiction/roleplay failure modes:
+
+- **No names for the male lead** — always referred to as "he", leaving name to the reader's imagination
+- **No premature closure** — generated content is a story's beginning, not its ending; no epiphanies or emotional conclusions
+- **Asymmetry preservation** — power gaps, faction opposition, and pursuit dynamics set by axes must persist throughout
+- **Desire stays implicit** — attraction conveyed through behavior only, never confirmed via inner monologue
+- **No webnovel stock phrases** — banned list of cliché descriptions (e.g. "thin lips slightly pursed", "slender fingers")
+- **Dark axes stay dark** — if the axis combination points to oppression/control/instability, no unearned warmth is inserted
+- **Voice differentiation** — speech style derived from axis settings, not a shared default register
+- **Dialogue authenticity** — conversations must include non-functional lines; not every sentence serves the plot
+- **Micro-reaction de-stocking** — generic body-language templates (e.g. "hand froze", "breath caught") limited to one use each
+
 ### Local Development
 
 ```bash
@@ -156,6 +170,20 @@ Open `http://localhost:8000`
 
 - **开场模式** — 未选 F / X / T 时触发，输出角色档案 + 开场场景
 - **时间线模式** — 选了 F / X / T 任一时触发，输出完整命运弧线、代价链条与终局
+
+### 质量约束
+
+后端 prompt 内置了一组结构性与文学性约束，基于 [cn-failure-atlas](https://github.com/Yuqing-Cai/cn-failure-atlas)（一套 LLM 虚构/角色扮演失败模式分类体系）设计：
+
+- **男主无名** — 全篇只用「他」指代，名字留给读者自己脑补
+- **开篇不收束** — 生成内容是起点而非终点，禁止顿悟句和情感定论
+- **不对称守恒** — 轴设定的权力差、立场对立、追逃关系必须贯穿全篇
+- **欲望半隐** — 吸引力只通过行为暗示，不通过内心独白确认
+- **网文库存禁用** — 禁用「薄唇微抿」「修长的手指」等模板化描写
+- **暗轴不加光** — 黑暗轴组合不插入未被轴支撑的暖意
+- **声音差异化** — 语言风格由轴设定推导，不共享默认散文腔
+- **台词真实感** — 对话中必须包含无功能台词，不是每句都为场景服务
+- **微反应去库存** — 通用身体微反应（「手停住了」「呼吸一顿」）全篇最多出现一次
 
 ### 本地运行
 
